@@ -46,6 +46,10 @@ function App() {
     }
   }
 
+  const currentDate = () => {
+    setDate(new Date());
+  }
+
   return (
     <div className="App">
       <h3>{months[date.getMonth()]} - {date.getFullYear()}</h3>
@@ -53,7 +57,7 @@ function App() {
         <table style={{ gap: "10px" }}>
           <thead>
             <tr>
-              {days.map((day, index) => <th key={index}>{day}</th>)}
+              {days.map((day, index) => <th key={index} style={{padding:".7rem"}}>{day}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -64,14 +68,15 @@ function App() {
                     const isCurrentDate = (new Date().getMonth() === date.getMonth()
                       && new Date().getFullYear() === date.getFullYear()
                       && new Date().getDate() === dt)
+                    const styles = {
+                      backgroundColor: isCurrentDate ? "red" : "",
+                      color: isCurrentDate ? "white" : "",
+                      fontWeight: isCurrentDate ? "bold" : "normal",
+                      fontSize: isCurrentDate ? "1.2rem" : "1rem",
+                      borderRadius: isCurrentDate ? "15px" : "",
+                    }
                     return (
-                      <td key={index} style={{
-                        backgroundColor: isCurrentDate ? "red" : "",
-                        color: isCurrentDate ? "white" : "black",
-                        fontWeight: isCurrentDate ? "bold" : "normal",
-                        fontSize: isCurrentDate ? "1.2rem" : "1rem",
-                        borderRadius: isCurrentDate ? "15px" : "",
-                      }}>
+                      <td key={index} style={styles}>
                         {dt}
                       </td>
                     );
@@ -84,8 +89,11 @@ function App() {
           </tbody>
         </table>
       </section>
-      <button onClick={prevMonth} style={{ marginRight: "30px" }}>Prev</button>
-      <button onClick={nextMonth}>Next</button>
+      <section style={{marginTop:"20px"}}>
+        <button onClick={prevMonth} style={{ marginRight: "5px" }}>Prev</button>
+        <button onClick={currentDate} style={{ marginRight: "5px" }}>Current</button>
+        <button onClick={nextMonth}>Next</button>
+      </section>
     </div>
   );
 }
