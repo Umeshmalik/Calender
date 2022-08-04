@@ -1,84 +1,92 @@
 import { useEffect, useState, Component } from "react";
 import "./App.css";
 
+import {months, days} from "./constants";
+
 function App() {
   const [date, setDate] = useState(new Date());
-  const [day, setDay] = useState(name);
-
-  const weekDays = {
-    0: "Sunday",
-    1: "Monday",
-    2: "Tuesday",
-    3: "Wednesday",
-    4: "Thursday",
-    5: "Friday",
-    6: "Saturday",
-  }
+  const [calData, setCalData] = useState([]);
 
   useEffect(() => {
-    setDay(weekDays[date.getDay()]);
-    fetch("https://jsonplaceholder.typicode.com/todos")
-      .then((res) => res.json())
-      .then((data) => console.log(data));
-  })
+    createCalenderDates(date.getMonth(), date.getFullYear());
+  }, [date])
   
+  const createCalenderDates = (month, year) => {
+    const dates = [];
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+    let date = 1;
+    for (let i = 0; i < firstDay; i++) {
+      dates.push("");
+    }
+    for (let i = 0; i < lastDate; i++) {
+      dates.push(date);
+      date++;
+    }
+    const datesChunk = [];
+    for (let i = 0; i < dates.length; i += 7) {
+      datesChunk.push(dates.slice(i, i + 7));
+    }
+    setCalData(datesChunk);
+  }
 
-  const getDay = (e) => {
-    console.log(new Date(e.target.value).toDateString());
-    setDate(new Date(e.target.value));
-    setDay(weekDays[new Date(e.target.value).getDay()]);
+  const nextMonth = () => {
+    if(date.getMonth() === 11) {
+      setDate(new Date(date.getFullYear() + 1, 0, 1));
+    }else {
+      setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
+    }
+  }
+
+  const prevMonth = () => {
+    if(date.getMonth() === 0) {
+      setDate(new Date(date.getFullYear() - 1, 11, 1));
+    }else{
+      setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
+    }
   }
 
   return (
     <div className="App">
-        <input type="date" placeholder="date" onChange={getDay}/>
-        <h3>Day on {date.toLocaleDateString()}  will be {day}</h3>
+      <h3>{months[date.getMonth()]} - {date.getFullYear()}</h3>
+        <section>
+          <table style={{gap:"10px"}}>
+            <thead>
+              <tr>
+                {days.map((day, index) => <th key={index}>{day}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {calData.map((dateRow, index) => {
+                return (
+                  <tr key={index}>
+                    {dateRow.map((dt, index) => {
+                      const isCurrentDate = (new Date().getMonth() === date.getMonth() 
+                          && new Date().getFullYear() === date.getFullYear()
+                          && new Date().getDate() === dt)
+                      return (
+                        <td key={index} style={{
+                            backgroundColor: isCurrentDate ? "red" : "",
+                            color: isCurrentDate ? "white" : "black",
+                            fontWeight: isCurrentDate ? "bold" : "normal",
+                            fontSize: isCurrentDate ? "1.2rem" : "1rem",
+                            borderRadius: isCurrentDate ? "15px" : "",
+                          }}>
+                          {dt}
+                        </td>
+                      );
+                    }
+                    )}
+                  </tr>
+                );
+                }
+              )}
+            </tbody>
+          </table>
+        </section>
+          <button onClick={prevMonth} style={{marginRight:"30px"}}>Prev</button>
+          <button onClick={nextMonth}>Next</button>
     </div>
   );
 }
-
-// class App extends Component{
-//   constructor(props){
-//     super(props);
-//     this.state = {
-//       date: new Date(),
-//       day: "",
-//       name: "Ram"
-//     }
-//   }
-
-//   componentDidMount(){
-//     const weekDays = {
-//       0: "Sunday",
-//       1: "Monday",
-//     }
-//     console.log(weekDays[this.state.date.getDay()]);
-//   }
-
-//   getDay = (e) => {
-//     this.setState({
-//       date: new Date(e.target.value),
-//       day: weekDays[new Date(e.target.value).getDay()],
-//     })
-//   }
-
-//   changeName = () => {
-//     this.setState({
-//       name: "Ramesh"
-//     })
-//   }
-
-//   render(){
-//     return(
-//       <div className="App">
-//         <input type="date" placeholder="date" onChange={this.getDay}/>
-//         <h3>Day on {this.state.date.toLocaleDateString()}  will be {this.state.day}</h3>
-//         <button onClick={this.changeName}>Click</button>
-//         <br/>
-//         <span>{this.state.name}</span>
-//       </div>
-//     )
-//   }
-// }
-
 export default App;
