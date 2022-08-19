@@ -13,7 +13,7 @@ const months = {
     11: "Dec",
 }
 
-const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun",]
+const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat",]
 
 export {
     months,
